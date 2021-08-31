@@ -147,7 +147,6 @@ export async function deployStack(
       ...{
         StackName: params.StackName,
         TemplateBody: params.TemplateBody,
-        TemplateURL: params.TemplateURL,
         Parameters: params.Parameters,
         Capabilities: params.Capabilities,
         ResourceTypes: params.ResourceTypes,

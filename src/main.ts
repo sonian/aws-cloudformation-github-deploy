@@ -83,19 +83,10 @@ export async function run(): Promise<void> {
     })
 
     // Setup CloudFormation Stack
-    let templateBody
-    let templateUrl
 
-    if (isUrl(template)) {
-      core.debug('Using CloudFormation Stack from Amazon S3 Bucket')
-      templateUrl = template
-    } else {
-      core.debug('Loading CloudFormation Stack template')
-      const templateFilePath = path.isAbsolute(template)
-        ? template
-        : path.join(GITHUB_WORKSPACE, template)
-      templateBody = fs.readFileSync(templateFilePath, 'utf8')
-    }
+    core.debug('Loading CloudFormation Stack template')
+    const templateBody = fs.readFileSync(template, 'utf8')
+    console.log('Read template')
 
     // CloudFormation Stack Parameter for the creation or update
     const params: CreateStackInput = {
@@ -106,7 +97,6 @@ export async function run(): Promise<void> {
       DisableRollback: disableRollback,
       TimeoutInMinutes: timeoutInMinutes,
       TemplateBody: templateBody,
-      TemplateURL: templateUrl,
       Tags: tags,
       EnableTerminationProtection: terminationProtections
     }

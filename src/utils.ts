@@ -37,17 +37,6 @@ export function parseNumber(s: string): number | undefined {
 }
 
 export function parseParameters(parameterOverrides: string): Parameter[] {
-  try {
-    const path = new URL(parameterOverrides)
-    const rawParameters = fs.readFileSync(path, 'utf-8')
-
-    return JSON.parse(rawParameters)
-  } catch (err) {
-    if (err.code !== 'ERR_INVALID_URL') {
-      throw err
-    }
-  }
-
   const parameters = new Map<string, string>()
   parameterOverrides.split(',').forEach(parameter => {
     const [key, value] = parameter.trim().split('=')
