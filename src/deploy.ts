@@ -136,6 +136,8 @@ export async function deployStack(
       .waitFor('stackCreateComplete', { StackName: params.StackName })
       .promise()
 
+    console.log('Stack created', stack)
+
     return stack.StackId
   }
 
