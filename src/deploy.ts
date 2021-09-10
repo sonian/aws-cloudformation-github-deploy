@@ -22,8 +22,8 @@ export async function genCfnUrl(stackArn: string, changeSetArn: string): Promise
 
   const url = pieces.join('')
 
-  const short: AxiosResponse<UrlShortenerResponse> = await axios.post('https://api.shrtco.de/v2/shorten', {
-    url
+  const short: AxiosResponse<UrlShortenerResponse> = await axios.get('https://api.shrtco.de/v2/shorten', {
+    params: { url }
   });
 
   return short.data.result.short_link;
