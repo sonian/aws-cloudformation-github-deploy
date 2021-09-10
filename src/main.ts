@@ -86,7 +86,6 @@ export async function run(): Promise<void> {
 
     core.debug('Loading CloudFormation Stack template')
     const templateBody = fs.readFileSync(template, 'utf8')
-    console.log('Read template')
 
     // CloudFormation Stack Parameter for the creation or update
     const params: CreateStackInput = {

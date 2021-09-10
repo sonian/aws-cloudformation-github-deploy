@@ -58,18 +58,20 @@ export async function updateStack(
   noExecuteChageSet: boolean,
   noDeleteFailedChangeSet: boolean
 ): Promise<string | undefined> {
-  core.debug('Creating CloudFormation Change Set')
+  core.info('Creating CloudFormation Change Set')
   await cfn.createChangeSet(params).promise()
 
   try {
-    core.debug('Waiting for CloudFormation Change Set creation')
+    core.info('Waiting for CloudFormation Change Set creation')
     await cfn
       .waitFor('changeSetCreateComplete', {
         ChangeSetName: params.ChangeSetName,
         StackName: params.StackName
       })
       .promise()
-  } catch (_) {
+  } catch (e) {
+    core.info(e);
+
     return cleanupChangeSet(
       cfn,
       stack,
@@ -135,8 +137,6 @@ export async function deployStack(
     await cfn
       .waitFor('stackCreateComplete', { StackName: params.StackName })
       .promise()
-
-    console.log('Stack created', stack)
 
     return stack.StackId
   }
