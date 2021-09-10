@@ -4,6 +4,17 @@ import { CreateChangeSetInput, CreateStackInput } from './main'
 
 export type Stack = aws.CloudFormation.Stack
 
+export function genCfnUrl(stackArn: string, changeSetArn: string): string {
+  const pieces = [
+    'https://console.aws.amazon.com/cloudformation/home',
+    `?region=${aws.config.region}#/stacks/changesets/changes`,
+    `?stackId=${encodeURIComponent(stackArn)}`,
+    `&changeSetId=${encodeURIComponent(changeSetArn)}`
+  ];
+
+  return pieces.join('')
+}
+
 export async function cleanupChangeSet(
   cfn: aws.CloudFormation,
   stack: Stack,
@@ -59,7 +70,7 @@ export async function updateStack(
   noDeleteFailedChangeSet: boolean
 ): Promise<string | undefined> {
   core.info('Creating CloudFormation Change Set')
-  await cfn.createChangeSet(params).promise()
+  const cset = await cfn.createChangeSet(params).promise()
 
   try {
     core.info('Waiting for CloudFormation Change Set creation')
@@ -82,6 +93,9 @@ export async function updateStack(
   }
 
   if (noExecuteChageSet) {
+    core.info('Changeset created')
+    core.info(genCfnUrl(stack.StackId!, cset.Id!))
+
     core.debug('Not executing the change set')
     return stack.StackId
   }
