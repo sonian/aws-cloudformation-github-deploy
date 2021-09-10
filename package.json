@@ -34,7 +34,9 @@
   },
   "dependencies": {
     "@actions/core": "^1.2.4",
-    "aws-sdk": "^2.725.0"
+    "@types/axios": "^0.14.0",
+    "aws-sdk": "^2.725.0",
+    "axios": "^0.21.4"
   },
   "devDependencies": {
     "@types/jest": "^26.0.7",

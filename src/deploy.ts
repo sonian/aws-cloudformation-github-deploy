@@ -1,10 +1,18 @@
 import * as core from '@actions/core'
 import * as aws from 'aws-sdk'
+import axios, { AxiosResponse } from 'axios';
 import { CreateChangeSetInput, CreateStackInput } from './main'
 
 export type Stack = aws.CloudFormation.Stack
 
-export function genCfnUrl(stackArn: string, changeSetArn: string): string {
+interface UrlShortenerResponse {
+  ok: string;
+  result: {
+    short_link: string;
+  }
+}
+
+export async function genCfnUrl(stackArn: string, changeSetArn: string): Promise<string> {
   const pieces = [
     'https://console.aws.amazon.com/cloudformation/home',
     `?region=${aws.config.region}#/stacks/changesets/changes`,
@@ -12,7 +20,13 @@ export function genCfnUrl(stackArn: string, changeSetArn: string): string {
     `&changeSetId=${encodeURIComponent(changeSetArn)}`
   ];
 
-  return pieces.join('')
+  const url = pieces.join('')
+
+  const short: AxiosResponse<UrlShortenerResponse> = await axios.post('https://api.shrtco.de/v2/shorten', {
+    url
+  });
+
+  return short.data.result.short_link;
 }
 
 export async function cleanupChangeSet(
@@ -94,7 +108,7 @@ export async function updateStack(
 
   if (noExecuteChageSet) {
     core.info('Changeset created')
-    core.info(genCfnUrl(stack.StackId!, cset.Id!))
+    core.info(await genCfnUrl(stack.StackId!, cset.Id!))
 
     core.debug('Not executing the change set')
     return stack.StackId
