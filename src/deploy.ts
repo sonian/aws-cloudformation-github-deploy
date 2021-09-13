@@ -6,8 +6,8 @@ import { CreateChangeSetInput, CreateStackInput } from './main'
 export type Stack = aws.CloudFormation.Stack
 
 interface UrlShortenerResponse {
-  link: string;
-  long_url: string;
+  link: string
+  long_url: string
 }
 
 export async function genCfnUrl(
@@ -28,10 +28,15 @@ export async function genCfnUrl(
     {
       long_url: url,
       domain: 'bit.ly'
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.BITLY_TOKEN}`
+      }
     }
   )
 
-  return short.data.link;
+  return short.data.link
 }
 
 export async function cleanupChangeSet(
