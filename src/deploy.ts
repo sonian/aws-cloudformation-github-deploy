@@ -6,10 +6,8 @@ import { CreateChangeSetInput, CreateStackInput } from './main'
 export type Stack = aws.CloudFormation.Stack
 
 interface UrlShortenerResponse {
-  ok: string
-  result: {
-    full_short_link: string
-  }
+  link: string;
+  long_url: string;
 }
 
 export async function genCfnUrl(
@@ -25,14 +23,15 @@ export async function genCfnUrl(
 
   const url = pieces.join('')
 
-  const short: AxiosResponse<UrlShortenerResponse> = await axios.get(
-    'https://api.shrtco.de/v2/shorten',
+  const short: AxiosResponse<UrlShortenerResponse> = await axios.post(
+    'https://api-ssl.bitly.com/v4/shorten',
     {
-      params: { url }
+      long_url: url,
+      domain: 'bit.ly'
     }
   )
 
-  return short.data.result.full_short_link
+  return short.data.link;
 }
 
 export async function cleanupChangeSet(
